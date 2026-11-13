@@ -39,8 +39,16 @@ jobs:
         run: |
           git config user.name "Lucas Fernandes Nunes"
           git config user.email "134228031+lucasnunesf@users.noreply.github.com"
-          mkdir -p log
-          echo "- $(date +%Y-%m-%d): revisão diária" >> log/daily-log.md
-          git add log/daily-log.md
-          git commit -m "Daily log $(date +%Y-%m-%d)"
+          DEST=sql-exercises/learning-lab/sql/01-fundamentals
+          NEXT=$(ls .queue/sql/*.sql 2>/dev/null | sort | head -1)
+          if [ -n "$NEXT" ]; then
+            NAME=$(basename "$NEXT")
+            git mv "$NEXT" "$DEST/$NAME"
+            git commit -m "Add $NAME"
+          else
+            mkdir -p log
+            echo "- $(date +%Y-%m-%d): revisão diária" >> log/daily-log.md
+            git add log/daily-log.md
+            git commit -m "Daily log $(date +%Y-%m-%d)"
+          fi
           git push
