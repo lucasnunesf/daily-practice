@@ -32,8 +32,16 @@ The data includes a few "imperfections" on purpose (a customer without a city, a
 | 03 | INNER JOIN, LEFT JOIN, anti-join | [03_joins.sql](sql/01-fundamentals/03_joins.sql) | ✅ |
 | 04 | CASE WHEN, subqueries, CTEs | [04_ctes_and_case.sql](sql/01-fundamentals/04_ctes_and_case.sql) | ✅ |
 | 05 | Window functions | [05_window_functions.sql](sql/01-fundamentals/05_window_functions.sql) | ✅ |
-| 06 | Data cleaning (duplicates, types, text) | — | 🔜 |
-| 07 | Data modeling (star schema) | — | 🔜 |
+| 06 | Data cleaning (duplicates, types, text) | [06_data_cleaning.sql](sql/01-fundamentals/06_data_cleaning.sql) | ✅ |
+| 07 | Data modeling (star schema) | [07_star_schema.sql](sql/01-fundamentals/07_star_schema.sql) | ✅ |
+| 08 | INSERT, UPDATE, DELETE and views | [08_dml_and_views.sql](sql/01-fundamentals/08_dml_and_views.sql) | ✅ |
+| 09 | UNION, INTERSECT, EXCEPT | [09_set_operations.sql](sql/01-fundamentals/09_set_operations.sql) | ✅ |
+| 10 | IN, EXISTS and correlated subqueries | [10_exists_and_subqueries.sql](sql/01-fundamentals/10_exists_and_subqueries.sql) | ✅ |
+| 11 | Incremental load (upsert) | [11_incremental_load.sql](sql/01-fundamentals/11_incremental_load.sql) | ✅ |
+| 12 | String functions | [12_string_functions.sql](sql/01-fundamentals/12_string_functions.sql) | ✅ |
+| 13 | Date functions | [13_date_functions.sql](sql/01-fundamentals/13_date_functions.sql) | ✅ |
+| 14 | ROW_NUMBER, RANK, DENSE_RANK | [14_ranking_functions.sql](sql/01-fundamentals/14_ranking_functions.sql) | ✅ |
+| 15 | Running totals and moving averages | [15_running_totals.sql](sql/01-fundamentals/15_running_totals.sql) | ✅ |
 
 ### Key takeaways
 
@@ -66,7 +74,7 @@ learning-lab/
 
 ## Next topics
 
-- More SQL: data cleaning and dimensional modeling
+- More SQL: query plans, transactions and cohort analysis
 - Python for data (pandas)
 - Cloud fundamentals (Azure)
 
