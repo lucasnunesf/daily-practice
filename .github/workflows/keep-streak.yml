@@ -1,0 +1,71 @@
+name: Keep streak
+
+on:
+  schedule:
+    - cron: "0 22 * * *"  # 19:00 Brasília
+    - cron: "0 1 * * *"   # 22:00 Brasília
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  streak:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/Sao_Paulo
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      USERNAME: lucasnunesf
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Definir o dia alvo (se o GitHub atrasar para depois da meia-noite, vale o dia anterior)
+        id: day
+        run: |
+          if [ "$(date +%H)" -lt 12 ]; then
+            DAY=$(date -d yesterday +%Y-%m-%d)
+            echo "commit_date=$DAY 23:30:00 -0300" >> "$GITHUB_OUTPUT"
+          else
+            DAY=$(date +%Y-%m-%d)
+            echo "commit_date=$(date '+%Y-%m-%d %H:%M:%S %z')" >> "$GITHUB_OUTPUT"
+          fi
+          echo "day=$DAY" >> "$GITHUB_OUTPUT"
+          echo "Dia alvo: $DAY"
+
+      - name: Contar contribuições do dia alvo
+        id: check
+        run: |
+          FROM=$(date -d "${{ steps.day.outputs.day }} 00:00" -u +%Y-%m-%dT%H:%M:%SZ)
+          TO=$(date -d "${{ steps.day.outputs.day }} 23:59:59" -u +%Y-%m-%dT%H:%M:%SZ)
+          COUNT=$(gh api graphql -f query='
+            query($u:String!,$from:DateTime!,$to:DateTime!){
+              user(login:$u){ contributionsCollection(from:$from,to:$to){
+                totalCommitContributions totalIssueContributions
+                totalPullRequestContributions totalPullRequestReviewContributions
+                totalRepositoryContributions } } }' \
+            -f u="$USERNAME" -f from="$FROM" -f to="$TO" \
+            --jq '.data.user.contributionsCollection | [.[]] | add')
+          echo "Contribuições: $COUNT"
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Publicar o próximo exercício se o dia estiver vazio
+        if: steps.check.outputs.count == '0'
+        env:
+          GIT_AUTHOR_DATE: ${{ steps.day.outputs.commit_date }}
+          GIT_COMMITTER_DATE: ${{ steps.day.outputs.commit_date }}
+        run: |
+          git config user.name "Lucas Fernandes Nunes"
+          git config user.email "134228031+lucasnunesf@users.noreply.github.com"
+          DEST=sql-exercises/learning-lab/sql/01-fundamentals
+          NEXT=$(ls .queue/sql/*.sql 2>/dev/null | sort | head -1)
+          if [ -n "$NEXT" ]; then
+            NAME=$(basename "$NEXT")
+            git mv "$NEXT" "$DEST/$NAME"
+            git commit -m "Add $NAME"
+          else
+            mkdir -p log
+            echo "- ${{ steps.day.outputs.day }}: revisão diária" >> log/daily-log.md
+            git add log/daily-log.md
+            git commit -m "Daily log ${{ steps.day.outputs.day }}"
+          fi
+          git push
