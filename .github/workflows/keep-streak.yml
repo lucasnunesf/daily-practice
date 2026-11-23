@@ -2,8 +2,12 @@ name: Keep streak
 
 on:
   schedule:
-    - cron: "0 22 * * *"  # 19:00 Brasília
-    - cron: "0 1 * * *"   # 22:00 Brasília
+    # Vários horários fora da hora cheia: o GitHub atrasa ou pula runs agendados.
+    # Cada run só commita se o dia ainda estiver vazio.
+    - cron: "37 17 * * *"  # 14:37 Brasília
+    - cron: "13 22 * * *"  # 19:13 Brasília
+    - cron: "47 0 * * *"   # 21:47 Brasília
+    - cron: "23 2 * * *"   # 23:23 Brasília
   workflow_dispatch:
 
 permissions:
